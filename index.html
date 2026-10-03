@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Word Whirl — Standalone</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#30364b,#11131b 70%);color:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,sans-serif;display:grid;place-items:center}.app{width:min(900px,94vw);padding:24px}.panel{background:#1b1f2c;border:1px solid #3c435b;border-radius:24px;padding:clamp(20px,5vw,44px);box-shadow:0 20px 60px #0008;text-align:center}.hidden{display:none}h1{font-size:clamp(40px,9vw,82px);margin:0;letter-spacing:.08em}.tag{opacity:.75;margin-bottom:40px}.mode-row,.controls,.rack{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.mode,button{border:0;border-radius:14px;padding:14px 20px;font-size:18px;font-weight:700;cursor:pointer;background:#353c52;color:white}.mode{min-width:150px;padding:24px}.mode:hover,button:hover{filter:brightness(1.18)}.primary{background:#e4b64e;color:#191919}.small{opacity:.6;margin-top:30px}header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.smallbtn{font-size:14px;padding:8px 12px}.word-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:24px 0;min-height:120px}.slot{background:#10131c;border-radius:10px;padding:10px;font-family:monospace;font-size:20px;letter-spacing:.12em}.slot.found{background:#284638}.current{height:54px;margin:14px;font-size:36px;font-weight:800;letter-spacing:.12em}.tile{width:64px;height:70px;border-radius:14px;background:#f1f0e7;color:#171923;display:grid;place-items:center;font-size:32px;font-weight:900;box-shadow:0 5px 0 #999;user-select:none}.tile.used{opacity:.25;transform:translateY(4px)}.message{min-height:28px;color:#f1cd75;font-weight:700}.controls{margin-top:26px}.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:20px;z-index:20}.modal.hidden{display:none}.modal-card{width:min(420px,92vw);background:#242a3a;border:1px solid #4c5571;border-radius:22px;padding:28px;text-align:center;box-shadow:0 20px 70px #000}.modal-card h2{font-size:32px;margin:0 0 8px}.final-score{font-size:54px;font-weight:900;color:#f1cd75;margin:12px 0 22px}.hinted{color:#f1cd75} @media(max-width:520px){.tile{width:52px;height:60px}.controls button{font-size:15px;padding:12px}.panel{padding:18px}}
+</style>
+</head>
+<body>
+<main class="app">
+<section id="menu" class="panel">
+<h1>WORD WHIRL</h1>
+<p class="tag">Unscramble. Discover. Keep the whirl going.</p>
+<h2>Choose a word size</h2>
+<div class="mode-row">
+<button class="mode" data-size="4">4-Letter</button>
+<button class="mode" data-size="5">5-Letter</button>
+<button class="mode" data-size="6">6-Letter</button>
+</div>
+<p class="small">Standalone HTML • No installation • Works offline</p>
+</section>
+<section id="game" class="panel hidden">
+<header><button id="home" class="smallbtn">Menu</button><div>Score <strong id="score">0</strong></div><div>Hints <strong id="hints">3</strong></div><div>Time <strong id="time">120</strong></div></header>
+<h2 id="modeTitle"></h2>
+<div id="wordBoard" class="word-board"></div>
+<div id="message" class="message">Find the words!</div>
+<div id="current" class="current">&nbsp;</div>
+<div id="rack" class="rack"></div>
+<div class="controls"><button id="shuffle">Shuffle</button><button id="clear">Clear</button><button id="hint">Hint</button><button id="submit" class="primary">Submit</button></div>
+<p class="small">Type letters • Backspace clears • Enter submits • Space shuffles</p>
+</section></main><div id="gameOver" class="modal hidden"><div class="modal-card"><h2>Time’s Up!</h2><p>Your total score</p><div id="finalScore" class="final-score">0</div><button id="gameOverOk" class="primary">OK</button></div></div>
+<script>
+var PUZZLES={
+4:[
+{rack:"EAST",words:["ATE","EAT","SEA","SET","TEA","EAST","EATS","SEAT","TEAS"]},
+{rack:"STOP",words:["OPT","POT","SOP","TOP","POST","POTS","SPOT","STOP","TOPS"]},
+{rack:"CARE",words:["ACE","ARC","ARE","CAR","EAR","ERA","ACRE","CARE","RACE"]},
+{rack:"NOTE",words:["EON","NET","NOT","ONE","TEN","TON","NOTE","TONE"]},
+{rack:"LATE",words:["ATE","EAT","LET","TEA","LATE","TALE","TEAL"]}
+],
+5:[
+{rack:"HEART",words:["ART","ATE","EAR","EAT","HAT","HEAR","HEAT","RATE","TEAR","EARTH","HEART","HATER"]},
+{rack:"STONE",words:["EON","NET","NOT","ONE","SET","SON","TEN","TON","NEST","NOTE","ONES","TONE","NOTES","ONSET","STONE","TONES"]},
+{rack:"LEAST",words:["ATE","EAT","LET","SEA","SET","TEA","EAST","EATS","LAST","SALE","SALT","SEAT","TALE","TEAL","LEAST","SLATE","STALE","STEAL","TALES"]},
+{rack:"PLANE",words:["ALE","APE","LAP","NAP","PAN","PEA","PEN","PLAN","PANE","PLANE","PANEL","PENAL"]},
+{rack:"TRAIL",words:["AIR","ART","LIT","RAT","TAR","TAIL","TRAIL","TRIAL"]}
+],
+6:[
+{rack:"STREAM",words:["ARE","ARM","ART","ATE","EAR","EAT","ERA","MAT","RAM","RAT","SEA","SET","TAR","TEA","MARE","MARS","MAST","RATE","SEAM","STAR","TEAM","TEAR","MARES","SMART","STEAM","TEAMS","TERMS","MASTER","STREAM","TAMERS"]},
+{rack:"LISTEN",words:["ITS","LET","LIE","LIT","NET","SET","SIN","SIT","TEN","TIE","LINE","LIST","NEST","SENT","TILE","TINE","LINES","ISLET","TILES","TINES","ENLIST","LISTEN","SILENT","TINSEL"]},
+{rack:"PLANET",words:["ALE","APE","ATE","LAP","LET","NAP","NET","PAL","PAN","PAT","PEA","PEN","PET","TEA","LATE","LEAN","PANE","PLAN","TALE","TEAL","PANEL","PLANE","PLANT","PLEAT","LEAPT","PLANET","PLATEN"]},
+{rack:"REACTS",words:["ACE","ACT","ARC","ARE","ART","ATE","CAR","CAT","EAR","EAT","ERA","RAT","SEA","SET","TAR","TEA","CARE","CASE","CAST","EAST","RACE","RATE","REST","STAR","TEAR","CARES","CATER","CRATE","REACT","TRACE","REACTS"]},
+{rack:"GARDEN",words:["AGE","AND","ARE","DEN","EAR","END","ERA","RAG","RAN","RED","DANGER","GANDER","GARDEN","RANGED"]}
+]};
+var state={size:4,score:0,hints:3,time:120,current:"",used:[],found:{},puzzle:null,timer:null,hintWord:null,hintCount:0,reveals:{}};
+function el(id){return document.getElementById(id)}
+function hasFound(w){return !!state.found[w]}
+function bind(){var modes=document.getElementsByClassName("mode");for(var i=0;i<modes.length;i++){modes[i].onclick=function(){start(parseInt(this.getAttribute("data-size"),10))}}el("home").onclick=home;el("clear").onclick=clearCurrent;el("shuffle").onclick=shuffle;el("submit").onclick=submit;el("hint").onclick=hint;el("gameOverOk").onclick=endToMenu;document.onkeydown=keyHandler}
+function home(){if(state.timer)clearInterval(state.timer);el("game").className="panel hidden";el("menu").className="panel"}
+function endToMenu(){el("gameOver").className="modal hidden";home()}
+function start(size){state.size=size;state.score=0;state.hints=3;state.hintWord=null;state.hintCount=0;state.reveals={};el("menu").className="panel hidden";el("game").className="panel";el("modeTitle").innerHTML=size+"-Letter";nextPuzzle();if(state.timer)clearInterval(state.timer);state.time=120;tick();state.timer=setInterval(function(){state.time--;tick();if(state.time<=0)gameOver()},1000)}
+function gameOver(){if(state.timer)clearInterval(state.timer);state.timer=null;el("finalScore").innerHTML=state.score;el("gameOver").className="modal"}
+function nextPuzzle(){var arr=PUZZLES[state.size],p=arr[Math.floor(Math.random()*arr.length)],tries=0;while(state.puzzle&&p.rack===state.puzzle.rack&&arr.length>1&&tries<10){p=arr[Math.floor(Math.random()*arr.length)];tries++}state.puzzle={rack:p.rack,words:p.words.slice(0)};state.found={};state.current="";state.used=[];state.hintWord=null;state.hintCount=0;state.reveals={};renderBoard();renderRack();update();msg("Find all the words!")}
+function displayWord(w){if(hasFound(w))return w;var r=state.reveals[w]||0,out="";for(var i=0;i<w.length;i++)out+=(i<r?'<span class="hinted">'+w.charAt(i)+'</span>':"_")+" ";return out}
+function renderBoard(){var board=el("wordBoard");board.innerHTML="";var words=state.puzzle.words.slice(0).sort(function(a,b){return a.length-b.length||(a>b?1:-1)});for(var i=0;i<words.length;i++){var w=words[i],d=document.createElement("div");d.className="slot"+(hasFound(w)?" found":"");d.innerHTML=displayWord(w);board.appendChild(d)}}
+function renderRack(){var rack=el("rack");rack.innerHTML="";if(!state.puzzle)return;for(var i=0;i<state.puzzle.rack.length;i++){(function(index){var b=document.createElement("button");b.type="button";b.className="tile"+(contains(state.used,index)?" used":"");b.innerHTML=state.puzzle.rack.charAt(index);b.onclick=function(){pick(index)};rack.appendChild(b)})(i)}}
+function contains(a,v){for(var i=0;i<a.length;i++)if(a[i]===v)return true;return false}function wordContains(a,v){for(var i=0;i<a.length;i++)if(a[i]===v)return true;return false}
+function pick(i){if(contains(state.used,i))return;state.used.push(i);state.current+=state.puzzle.rack.charAt(i);renderRack();update()}
+function clearCurrent(){state.current="";state.used=[];renderRack();update()}
+function shuffle(){var a=state.puzzle.rack.split("");for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}state.puzzle.rack=a.join("");clearCurrent()}
+function countFound(){var n=0;for(var k in state.found)if(state.found.hasOwnProperty(k)&&state.found[k])n++;return n}
+function submit(){var w=state.current.toUpperCase();if(!w)return;if(hasFound(w))msg("Already found!");else if(wordContains(state.puzzle.words,w)){state.found[w]=true;state.score+=w.length*10;if(state.hintWord===w){state.hintWord=null;state.hintCount=0}msg("Nice! +"+(w.length*10));renderBoard();if(countFound()===state.puzzle.words.length){state.score+=100;msg("Round complete! +100");update();setTimeout(nextPuzzle,900)}}else msg("Not in this puzzle.");clearCurrent();update()}
+function hint(){if(state.hints<=0){msg("No hints remaining.");return}var left=[],i,w;if(state.hintWord&&!hasFound(state.hintWord)){w=state.hintWord}else{for(i=0;i<state.puzzle.words.length;i++)if(!hasFound(state.puzzle.words[i]))left.push(state.puzzle.words[i]);if(!left.length)return;w=left[Math.floor(Math.random()*left.length)];state.hintWord=w;state.hintCount=state.reveals[w]||0}if(state.hintCount>=w.length-1){state.hintWord=null;state.hintCount=0;return hint()}state.hintCount++;state.reveals[w]=state.hintCount;state.hints--;renderBoard();msg("Hint revealed another letter.");update()}
+function update(){el("score").innerHTML=state.score;el("hints").innerHTML=state.hints;el("current").innerHTML=state.current||"&nbsp;"}function tick(){el("time").innerHTML=state.time}function msg(t){el("message").innerHTML=t}
+function keyHandler(e){e=e||window.event;if(el("game").className.indexOf("hidden")>=0||el("gameOver").className.indexOf("hidden")<0)return;var key=e.key||"";if(key==="Enter")submit();else if(key==="Backspace"){clearCurrent();return false}else if(key===" "){shuffle();return false}else if(key.length===1&&/[a-z]/i.test(key)){var c=key.toUpperCase();for(var i=0;i<state.puzzle.rack.length;i++){if(state.puzzle.rack.charAt(i)===c&&!contains(state.used,i)){pick(i);break}}}}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",bind,false)}else{bind()}
+</script>
+</body></html>
